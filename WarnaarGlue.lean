@@ -3,3 +3,4 @@ import WarnaarGlue.PascalLadder
 import WarnaarGlue.Inversion
 import WarnaarGlue.D4Positive
 import WarnaarGlue.Seed2Chain
+import WarnaarGlue.TheoremD
