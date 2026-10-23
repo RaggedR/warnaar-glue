@@ -1,0 +1,39 @@
+name: Lean Action CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      # Builds the `WarnaarGlue` library (fetches the Mathlib olean cache first,
+      # so Mathlib is not recompiled from source).
+      - uses: leanprover/lean-action@v1
+
+      # Certification: no `sorry` reaches any headline result.
+      # Default shell is `bash -eo pipefail`, so a Lean elaboration error (e.g.
+      # an unresolved name) fails the step on its own. We also fail on `sorryAx`,
+      # and — to defeat a vacuous pass — require a report for each result.
+      - name: Axiom certification (no sorry reaches the headline results)
+        run: |
+          lake env lean Certify.lean 2>&1 | tee axioms.txt
+          if grep -q "sorryAx" axioms.txt; then
+            echo "::error::sorryAx reached a headline result — certification failed"
+            exit 1
+          fi
+          for t in WarnaarGlue.Qcw_nonneg WarnaarGlue.pascal_ladder WarnaarGlue.qbinom_inversion WarnaarGlue.d4_positive WarnaarGlue.seed2_chain; do
+            if ! grep -q "'$t' depends on axioms" axioms.txt; then
+              echo "::error::no axiom report for '$t' — name did not resolve (vacuous certification)"
+              exit 1
+            fi
+          done
+          echo "Certified: all headline results proved with no sorry."
