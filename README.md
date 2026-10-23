@@ -1,5 +1,14 @@
 # WarnaarGlue
 
+[![Lean CI](https://github.com/RaggedR/warnaar-glue/actions/workflows/lean_action_ci.yml/badge.svg)](https://github.com/RaggedR/warnaar-glue/actions/workflows/lean_action_ci.yml)
+
+> **Green = machine-checked, no `sorry`.** CI builds the library and runs
+> `#print axioms` on the headline results — the unconditional ones
+> (`Qcw_nonneg`, `pascal_ladder`, `qbinom_inversion`) and the ones conditional on
+> the explicit named literature hypotheses below (`d4_positive`, `seed2_chain`).
+> All reduce to only Lean's foundational axioms; the imported literature is
+> carried as honest hypotheses, not re-proved and not hidden behind a `sorry`.
+
 Lean 4 / Mathlib formalization of the connecting arguments ("glue") in two
 results on Warnaar's positivity conjectures for A₂ cylindric partitions:
 
